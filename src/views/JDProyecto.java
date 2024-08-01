@@ -72,6 +72,7 @@ public class JDProyecto extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        rdbs = new javax.swing.ButtonGroup();
         background = new javax.swing.JPanel();
         txtAtributos = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -88,6 +89,9 @@ public class JDProyecto extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        rdbNominal = new javax.swing.JRadioButton();
+        rdbNumerico = new javax.swing.JRadioButton();
+        lblClase = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -136,13 +140,13 @@ public class JDProyecto extends javax.swing.JDialog {
 
         btnLimpiarItems.setText("Limpiar Datos");
         background.add(btnLimpiarItems);
-        btnLimpiarItems.setBounds(20, 240, 150, 30);
+        btnLimpiarItems.setBounds(20, 270, 150, 30);
 
         jlItems.setFocusable(false);
         jScrollPane1.setViewportView(jlItems);
 
         background.add(jScrollPane1);
-        jScrollPane1.setBounds(20, 160, 150, 70);
+        jScrollPane1.setBounds(20, 190, 150, 70);
 
         txtAtributo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtAtributo.setForeground(new java.awt.Color(153, 153, 153));
@@ -162,10 +166,10 @@ public class JDProyecto extends javax.swing.JDialog {
         btnCrearTabla.setBackground(new java.awt.Color(102, 102, 255));
         btnCrearTabla.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnCrearTabla.setForeground(new java.awt.Color(255, 255, 255));
-        btnCrearTabla.setText("Crear tabla binaria");
+        btnCrearTabla.setText("Crear tabla");
         btnCrearTabla.setEnabled(false);
         background.add(btnCrearTabla);
-        btnCrearTabla.setBounds(20, 280, 150, 30);
+        btnCrearTabla.setBounds(20, 310, 150, 30);
 
         jtDatos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -192,7 +196,7 @@ public class JDProyecto extends javax.swing.JDialog {
         btnExcel.setForeground(new java.awt.Color(255, 255, 255));
         btnExcel.setText("Cargar tabla Excel");
         background.add(btnExcel);
-        btnExcel.setBounds(20, 320, 150, 30);
+        btnExcel.setBounds(20, 350, 150, 30);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Instancias");
@@ -211,6 +215,21 @@ public class JDProyecto extends javax.swing.JDialog {
         jLabel7.setFocusable(false);
         background.add(jLabel7);
         jLabel7.setBounds(560, 40, 180, 20);
+
+        rdbs.add(rdbNominal);
+        rdbNominal.setText("Nominal");
+        background.add(rdbNominal);
+        rdbNominal.setBounds(17, 160, 68, 21);
+
+        rdbs.add(rdbNumerico);
+        rdbNumerico.setText("Numérico");
+        background.add(rdbNumerico);
+        rdbNumerico.setBounds(94, 160, 74, 21);
+
+        lblClase.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblClase.setText("Atributo Clase");
+        background.add(lblClase);
+        lblClase.setBounds(20, 160, 90, 16);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -240,7 +259,7 @@ public class JDProyecto extends javax.swing.JDialog {
                 this.txtAtributos.requestFocus();
                 return;
             }
-            if(this.txtAtributo.getText().equals("") || this.txtAtributo.getText().equals("Nombre Item")) {
+            if(this.txtAtributo.getText().equals("") || this.txtAtributo.getText().equals("Atributo")) {
                 JOptionPane.showMessageDialog(this, "Debes ingresar un nombre de item.", "Reglas de Asociación", JOptionPane.INFORMATION_MESSAGE);
                 this.txtAtributo.requestFocus();
                 return;
@@ -367,6 +386,10 @@ public class JDProyecto extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JList<String> jlItems;
     public javax.swing.JTable jtDatos;
+    public javax.swing.JLabel lblClase;
+    public javax.swing.JRadioButton rdbNominal;
+    public javax.swing.JRadioButton rdbNumerico;
+    public javax.swing.ButtonGroup rdbs;
     public javax.swing.JTextField txtAtributo;
     public javax.swing.JTextField txtAtributos;
     public javax.swing.JTextField txtInstancias;

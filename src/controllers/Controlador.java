@@ -10,13 +10,22 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import views.JDNominal;
+import views.JDNumerico;
 import views.JDProyecto;
 
 /**
@@ -26,10 +35,18 @@ import views.JDProyecto;
 public class Controlador implements MouseListener, FocusListener, ActionListener, TableModelListener {
     private JDProyecto formulario;
     public static DefaultListModel<String> listModel;
+    public static ArrayList<String> valoresNumericos;
+    public static ArrayList<String> valoresNominales;
+    private Map<String, String> tipoAtributos; // Mapa para almacenar el tipo de cada atributo (nominal o numerico)
+
     
     public Controlador(JDProyecto formulario) {
         this.formulario = formulario;
         Controlador.listModel = new DefaultListModel<>();
+        this.formulario.lblClase.setVisible(false);
+        Controlador.valoresNumericos = new ArrayList<>();
+        Controlador.valoresNominales = new ArrayList<>();
+        tipoAtributos = new HashMap<>();
         
         // Listeners
         this.formulario.txtAtributos.addFocusListener(this);
@@ -46,6 +63,16 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         this.formulario.btnExcel.addActionListener(this);
     }
     
+    private static boolean isAnyButtonSelected(ButtonGroup buttonGroup) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     // Iniciar el formulario
     public void iniciarVista() {
         this.formulario.setTitle("Arboles de desición");
@@ -60,10 +87,15 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         Controlador.listModel.clear();
         this.formulario.txtAtributo.setForeground(new Color(0x999999));
         this.formulario.txtAtributo.setBackground(new Color(0xFFFFFF));
-        this.formulario.txtAtributo.setText("Nombre Item");
+        this.formulario.txtAtributo.setText("Atributo");
         this.formulario.jlItems.setModel(new DefaultListModel<>());
         this.formulario.btnCrearTabla.setEnabled(false);
         this.formulario.jtDatos.setModel(new DefaultTableModel());
+        this.formulario.rdbNominal.setEnabled(true);
+        this.formulario.rdbNumerico.setEnabled(true);
+        this.formulario.lblClase.setVisible(false);
+        this.formulario.rdbNominal.setVisible(true);
+        this.formulario.rdbNumerico.setVisible(true);
         this.formulario.txtAtributo.requestFocus();
     }
     
@@ -87,7 +119,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         if(e.getSource() == this.formulario.txtAtributo) {
             this.formulario.txtAtributo.setForeground(new Color(0x353535));
             this.formulario.txtAtributo.setBackground(new Color(0xF9F4E0));
-            if(this.formulario.txtAtributo.getText().equals("Nombre Item")) {
+            if(this.formulario.txtAtributo.getText().equals("Atributo")) {
                 this.formulario.txtAtributo.setText("");
             }
         }
@@ -120,7 +152,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
             if(this.formulario.txtAtributo.getText().equals("")) {
                 this.formulario.txtAtributo.setForeground(new Color(0x999999));
                 this.formulario.txtAtributo.setBackground(new Color(0xFFFFFF));
-                this.formulario.txtAtributo.setText("Nombre Item");
+                this.formulario.txtAtributo.setText("Atributo");
             } else {
                 this.formulario.txtAtributo.setBackground(new Color(0xFBF7E8));
             }
@@ -178,10 +210,41 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
                 this.formulario.txtAtributos.requestFocus();
                 return;
             }
-            if(this.formulario.txtAtributo.getText().equals("") || this.formulario.txtAtributo.getText().equals("Nombre Item")) {
+            if(this.formulario.txtAtributo.getText().equals("") || this.formulario.txtAtributo.getText().equals("Atributo")) {
                 JOptionPane.showMessageDialog(this.formulario, "Debes ingresar un nombre de atributo.", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
                 this.formulario.txtAtributo.requestFocus();
                 return;
+            }
+            if(this.formulario.jlItems.getModel().getSize() != (Integer.parseInt(this.formulario.txtAtributos.getText()) - 1)) {
+                if(!Controlador.isAnyButtonSelected(this.formulario.rdbs)) {
+                    JOptionPane.showMessageDialog(this.formulario, "Debes seleccionar un tipo de atributo.", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
+                    this.formulario.txtAtributo.requestFocus();
+                    return;
+                }
+            }
+            if(this.formulario.rdbNominal.isSelected()) {
+                JDNominal nominal = new JDNominal(new JFrame(), true);
+                nominal.setTitle("Valores nominales");
+                nominal.setSize(340, 100);
+                nominal.setIconImage(new ImageIcon(getClass().getResource("/sources/upsin-icon.jpg")).getImage());
+                nominal.setLocationRelativeTo(null);
+                nominal.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                nominal.setVisible(true);
+                
+                // Añadir tipo de atributo nominal
+                tipoAtributos.put(this.formulario.txtAtributo.getText(), "nominal");
+            }
+            if(this.formulario.rdbNumerico.isSelected()) {
+                JDNumerico numerico = new JDNumerico(new JFrame(), true);
+                numerico.setTitle("Valores numéricos");
+                numerico.setSize(186, 120);
+                numerico.setIconImage(new ImageIcon(getClass().getResource("/sources/upsin-icon.jpg")).getImage());
+                numerico.setLocationRelativeTo(null);
+                numerico.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                numerico.setVisible(true);
+                
+                // Añadir tipo de atributo numérico
+                tipoAtributos.put(this.formulario.txtAtributo.getText(), "numerico");
             }
             // Lógica
             if(this.formulario.jlItems.getModel().getSize() < Integer.parseInt(this.formulario.txtAtributos.getText())) {
@@ -189,6 +252,14 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
                 this.formulario.jlItems.setModel(Controlador.listModel);
                 this.formulario.txtAtributo.setText("");
                 this.formulario.txtAtributo.requestFocus();
+                if(this.formulario.jlItems.getModel().getSize() == (Integer.parseInt(this.formulario.txtAtributos.getText()) - 1)) {
+                    this.formulario.rdbs.clearSelection();
+                    this.formulario.rdbNominal.setEnabled(false);
+                    this.formulario.rdbNumerico.setEnabled(false);
+                    this.formulario.rdbNominal.setVisible(false);
+                    this.formulario.rdbNumerico.setVisible(false);
+                    this.formulario.lblClase.setVisible(true);
+                }
                 if(this.formulario.jlItems.getModel().getSize() == Integer.parseInt(this.formulario.txtAtributos.getText())) {
                     this.formulario.btnCrearTabla.setEnabled(true);
                 }
@@ -205,17 +276,17 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         if(e.getSource() == this.formulario.btnCrearTabla) {
             int numeroItems = Integer.parseInt(this.formulario.txtAtributos.getText());
             int numeroInstancias = Integer.parseInt(this.formulario.txtInstancias.getText());
-            
+
             // Validaciones
-            if(this.formulario.jlItems.getModel().getSize() < numeroItems) {
-                JOptionPane.showMessageDialog(this.formulario, "Faltan atributos por ingresar.", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
+            if (this.formulario.jlItems.getModel().getSize() < numeroItems) {
+                JOptionPane.showMessageDialog(this.formulario, "Faltan atributos por ingresar.", "Árboles de decisión", JOptionPane.INFORMATION_MESSAGE);
                 this.formulario.txtAtributo.setText("");
                 this.formulario.txtAtributo.requestFocus();
                 return;
             }
-            
-            this.formulario.revalidate();
-            this.formulario.repaint();
+
+            // Crear la tabla con los datos
+            crearTabla(numeroItems, numeroInstancias);
         }
         if(e.getSource() == this.formulario.btnExcel) {
             this.limpiar();
@@ -235,6 +306,50 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
             this.formulario.revalidate();
             this.formulario.repaint();
         }
+    }
+    
+    private void crearTabla(int numeroItems, int numeroInstancias) {
+        DefaultTableModel tableModel = new DefaultTableModel();
+
+        // Añadir las columnas al modelo de la tabla
+        for (int i = 0; i < numeroItems; i++) {
+            tableModel.addColumn(this.formulario.jlItems.getModel().getElementAt(i));
+        }
+
+        // Generar las filas de datos
+        for (int i = 0; i < numeroInstancias; i++) {
+            ArrayList<String> rowData = new ArrayList<>();
+            for (int j = 0; j < numeroItems - 1; j++) {
+                String atributo = this.formulario.jlItems.getModel().getElementAt(j);
+                String valor = "";
+
+                if (tipoAtributos.get(atributo).equals("nominal")) {
+                    // Seleccionar un valor nominal al azar
+                    valor = Controlador.valoresNominales.get((int)(Math.random() * Controlador.valoresNominales.size()));
+                } else if (tipoAtributos.get(atributo).equals("numerico")) {
+                    int valor1 = Integer.parseInt(Controlador.valoresNumericos.get(0));
+                    int valor2 = Integer.parseInt(Controlador.valoresNumericos.get(1));
+                    double randomValue = Math.random();
+                    if (randomValue < 0.33) {
+                        valor = "< " + valor1;
+                    } else if (randomValue < 0.66) {
+                        valor = valor1 + " - " + valor2;
+                    } else {
+                        valor = "> " + valor2;
+                    }
+                }
+                rowData.add(valor);
+            }
+            // Generar un valor aleatorio de 0 o 1 para la clase
+            String clase = Math.random() < 0.5 ? "0" : "1";
+            rowData.add(clase);
+            tableModel.addRow(rowData.toArray());
+        }
+
+        // Asignar el modelo al JTable
+        this.formulario.jtDatos.setModel(tableModel);
+        this.formulario.revalidate();
+        this.formulario.repaint();
     }
     
     // Evento que sucede al cambiar alguna celda binaria
