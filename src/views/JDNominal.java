@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
 import javax.swing.JOptionPane;
 
 /**
@@ -64,6 +65,11 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
         rdb2.setBounds(120, 18, 19, 20);
 
         rdb3.setFocusable(false);
+        rdb3.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                rdb3ItemStateChanged(evt);
+            }
+        });
         getContentPane().add(rdb3);
         rdb3.setBounds(227, 18, 19, 20);
 
@@ -95,7 +101,7 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
 
         txt3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txt3.setForeground(new java.awt.Color(153, 153, 153));
-        txt3.setText("Desc.");
+        txt3.setEnabled(false);
         getContentPane().add(txt3);
         txt3.setBounds(256, 13, 64, 30);
 
@@ -117,11 +123,19 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
             JOptionPane.showMessageDialog(this, "Debes seleccionar almenos 2 valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        if((this.txt1.getText().equals("Desc.") || this.txt1.getText().equals("")) ||
-          (this.txt2.getText().equals("Desc.") || this.txt2.getText().equals("")) ||
-          (this.txt3.getText().equals("Desc.") || this.txt3.getText().equals(""))) {
-            JOptionPane.showMessageDialog(this, "Primero asigna todos los valores nominales a considerar", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
-            return;
+        if(this.txt3.isEnabled()) {
+            if((this.txt1.getText().equals("Desc.") || this.txt1.getText().equals("")) ||
+              (this.txt2.getText().equals("Desc.") || this.txt2.getText().equals("")) ||
+              (this.txt3.getText().equals("Desc.") || this.txt3.getText().equals(""))) {
+                JOptionPane.showMessageDialog(this, "Ingresa todos los valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+        } else {
+            if((this.txt1.getText().equals("Desc.") || this.txt1.getText().equals("")) ||
+              (this.txt2.getText().equals("Desc.") || this.txt2.getText().equals(""))) {
+                JOptionPane.showMessageDialog(this, "Ingresa todos los valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
         }
         if(!Controlador.valoresNominales.isEmpty())
             Controlador.valoresNominales.clear();
@@ -140,6 +154,16 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_btnOkActionPerformed
+
+    private void rdb3ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rdb3ItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            this.txt3.setEnabled(true);
+            this.txt3.setText("Desc.");
+        } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            this.txt3.setEnabled(false);
+            this.txt3.setText("");
+        }
+    }//GEN-LAST:event_rdb3ItemStateChanged
 
     /**
      * @param args the command line arguments

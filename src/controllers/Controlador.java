@@ -37,6 +37,8 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
     public static DefaultListModel<String> listModel;
     public static ArrayList<String> valoresNumericos;
     public static ArrayList<String> valoresNominales;
+    private Map<String, String[]> valoresNominalesPorAtributo;
+    private Map<String, int[]> valoresNumericosPorAtributo;
     private Map<String, String> tipoAtributos; // Mapa para almacenar el tipo de cada atributo (nominal o numerico)
 
     
@@ -46,6 +48,8 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         this.formulario.lblClase.setVisible(false);
         Controlador.valoresNumericos = new ArrayList<>();
         Controlador.valoresNominales = new ArrayList<>();
+        valoresNominalesPorAtributo = new HashMap<>();
+        valoresNumericosPorAtributo = new HashMap<>();
         tipoAtributos = new HashMap<>();
         
         // Listeners
@@ -222,6 +226,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
                     return;
                 }
             }
+            String atributo = this.formulario.txtAtributo.getText();
             if(this.formulario.rdbNominal.isSelected()) {
                 JDNominal nominal = new JDNominal(new JFrame(), true);
                 nominal.setTitle("Valores nominales");
@@ -230,9 +235,10 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
                 nominal.setLocationRelativeTo(null);
                 nominal.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 nominal.setVisible(true);
-                
+
                 // Añadir tipo de atributo nominal
-                tipoAtributos.put(this.formulario.txtAtributo.getText(), "nominal");
+                tipoAtributos.put(atributo, "nominal");
+                valoresNominalesPorAtributo.put(atributo, Controlador.valoresNominales.toArray(new String[0]));
             }
             if(this.formulario.rdbNumerico.isSelected()) {
                 JDNumerico numerico = new JDNumerico(new JFrame(), true);
@@ -242,13 +248,17 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
                 numerico.setLocationRelativeTo(null);
                 numerico.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 numerico.setVisible(true);
-                
+
                 // Añadir tipo de atributo numérico
-                tipoAtributos.put(this.formulario.txtAtributo.getText(), "numerico");
+                tipoAtributos.put(atributo, "numerico");
+                int[] valoresNumericos = new int[2];
+                valoresNumericos[0] = Integer.parseInt(Controlador.valoresNumericos.get(0));
+                valoresNumericos[1] = Integer.parseInt(Controlador.valoresNumericos.get(1));
+                valoresNumericosPorAtributo.put(atributo, valoresNumericos);
             }
             // Lógica
             if(this.formulario.jlItems.getModel().getSize() < Integer.parseInt(this.formulario.txtAtributos.getText())) {
-                Controlador.listModel.addElement(this.formulario.txtAtributo.getText());
+                Controlador.listModel.addElement(atributo);
                 this.formulario.jlItems.setModel(Controlador.listModel);
                 this.formulario.txtAtributo.setText("");
                 this.formulario.txtAtributo.requestFocus();
@@ -325,10 +335,12 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
 
                 if (tipoAtributos.get(atributo).equals("nominal")) {
                     // Seleccionar un valor nominal al azar
-                    valor = Controlador.valoresNominales.get((int)(Math.random() * Controlador.valoresNominales.size()));
+                    String[] valoresNominales = valoresNominalesPorAtributo.get(atributo);
+                    valor = valoresNominales[(int)(Math.random() * valoresNominales.length)];
                 } else if (tipoAtributos.get(atributo).equals("numerico")) {
-                    int valor1 = Integer.parseInt(Controlador.valoresNumericos.get(0));
-                    int valor2 = Integer.parseInt(Controlador.valoresNumericos.get(1));
+                    int[] valoresNumericos = valoresNumericosPorAtributo.get(atributo);
+                    int valor1 = valoresNumericos[0];
+                    int valor2 = valoresNumericos[1];
                     double randomValue = Math.random();
                     if (randomValue < 0.33) {
                         valor = "< " + valor1;
