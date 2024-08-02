@@ -88,7 +88,6 @@ public class JDProyecto extends javax.swing.JDialog {
         btnExcel = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         rdbNominal = new javax.swing.JRadioButton();
         rdbNumerico = new javax.swing.JRadioButton();
         lblClase = new javax.swing.JLabel();
@@ -210,12 +209,6 @@ public class JDProyecto extends javax.swing.JDialog {
         background.add(jLabel4);
         jLabel4.setBounds(180, 40, 110, 20);
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel7.setText("...");
-        jLabel7.setFocusable(false);
-        background.add(jLabel7);
-        jLabel7.setBounds(560, 40, 180, 20);
-
         rdbs.add(rdbNominal);
         rdbNominal.setText("Nominal");
         background.add(rdbNominal);
@@ -235,11 +228,11 @@ public class JDProyecto extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, 1084, Short.MAX_VALUE)
+            .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+            .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
         );
 
         pack();
@@ -415,7 +408,6 @@ public class JDProyecto extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JList<String> jlItems;

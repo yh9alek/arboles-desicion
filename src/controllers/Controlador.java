@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -41,7 +42,6 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
     private Map<String, int[]> valoresNumericosPorAtributo;
     private Map<String, String> tipoAtributos; // Mapa para almacenar el tipo de cada atributo (nominal o numerico)
 
-    
     public Controlador(JDProyecto formulario) {
         this.formulario = formulario;
         Controlador.listModel = new DefaultListModel<>();
@@ -80,7 +80,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
     // Iniciar el formulario
     public void iniciarVista() {
         this.formulario.setTitle("Arboles de desición");
-        this.formulario.setSize(1084, 540);
+        this.formulario.setSize(582, 436);
         this.formulario.setIconImage(new ImageIcon(getClass().getResource("/sources/upsin-icon.jpg")).getImage());
         this.formulario.setLocationRelativeTo(null);
         this.formulario.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -298,6 +298,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
 
             // Crear la tabla con los datos
             crearTabla(numeroItems, numeroInstancias);
+            calcularGananciasInformacion();
         }
         if(e.getSource() == this.formulario.btnExcel) {
             this.limpiar();
@@ -316,6 +317,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
             this.formulario.jtDatos.setModel(modelo);
             this.formulario.revalidate();
             this.formulario.repaint();
+            calcularGananciasInformacion();
         }
     }
     
@@ -364,7 +366,90 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         this.formulario.revalidate();
         this.formulario.repaint();
     }
-    
+
+    // Método para calcular la entropía
+    private double calcularEntropia(int positivos, int negativos) {
+        if (positivos == 0 || negativos == 0) return 0.0;
+        double total = positivos + negativos;
+        double pPositivos = positivos / total;
+        double pNegativos = negativos / total;
+        return - (pPositivos * Math.log(pPositivos) / Math.log(2)) - (pNegativos * Math.log(pNegativos) / Math.log(2));
+    }
+
+    // Método para calcular la ganancia de información
+    private double calcularGananciaInformacion(DefaultTableModel tableModel, String atributo) {
+        int totalInstancias = tableModel.getRowCount();
+        int positivos = 0;
+        int negativos = 0;
+
+        // Contar positivos y negativos
+        for (int i = 0; i < totalInstancias; i++) {
+            if (tableModel.getValueAt(i, tableModel.getColumnCount() - 1).equals("1")) {
+                positivos++;
+            } else {
+                negativos++;
+            }
+        }
+
+        double entropiaS = calcularEntropia(positivos, negativos);
+
+        Map<String, int[]> conteos = new HashMap<>();
+
+        for (int i = 0; i < totalInstancias; i++) {
+            String valorAtributo = tableModel.getValueAt(i, tableModel.findColumn(atributo)).toString();
+            String clase = tableModel.getValueAt(i, tableModel.getColumnCount() - 1).toString();
+            conteos.putIfAbsent(valorAtributo, new int[2]);
+            if (clase.equals("1")) {
+                conteos.get(valorAtributo)[0]++;
+            } else {
+                conteos.get(valorAtributo)[1]++;
+            }
+        }
+
+        double sumaEntropias = 0.0;
+        for (Map.Entry<String, int[]> entry : conteos.entrySet()) {
+            String valor = entry.getKey();
+            int[] counts = entry.getValue();
+            double subTotal = counts[0] + counts[1];
+            sumaEntropias += (subTotal / totalInstancias) * calcularEntropia(counts[0], counts[1]);
+        }
+
+        return entropiaS - sumaEntropias;
+    }
+
+    // Método para calcular las ganancias de información de todos los atributos
+    private void calcularGananciasInformacion() {
+        DefaultTableModel tableModel = (DefaultTableModel) this.formulario.jtDatos.getModel();
+        Map<String, Double> ganancias = new HashMap<>();
+        double maxGanancia = Double.NEGATIVE_INFINITY;
+        String mejorAtributo = "";
+        
+        for (int i = 0; i < tableModel.getColumnCount() - 1; i++) {
+            String atributo = tableModel.getColumnName(i);
+            double ganancia = calcularGananciaInformacion(tableModel, atributo);
+            ganancias.put(atributo, ganancia);
+            if (ganancia > maxGanancia) {
+                maxGanancia = ganancia;
+                mejorAtributo = atributo;
+            }
+        }
+        
+        double entropiaGeneral = calcularEntropia(
+                (int) tableModel.getDataVector().stream().filter(row -> ((Vector)row).lastElement().equals("1")).count(),
+                (int) tableModel.getDataVector().stream().filter(row -> ((Vector)row).lastElement().equals("0")).count()
+        );
+
+        // Mostrar resultados
+        StringBuilder resultados = new StringBuilder();
+        resultados.append("Entropía General: ").append(String.format("%.2f", entropiaGeneral)).append("\n");
+        for (Map.Entry<String, Double> entry : ganancias.entrySet()) {
+            resultados.append("Ganancia de ").append(entry.getKey()).append(": ").append(String.format("%.3f", entry.getValue())).append("\n");
+        }
+        resultados.append("Nodo Raíz: ").append(mejorAtributo);
+
+        JOptionPane.showMessageDialog(this.formulario, resultados.toString(), "Resultados", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     // Evento que sucede al cambiar alguna celda binaria
     @Override
     public void tableChanged(TableModelEvent e) {
