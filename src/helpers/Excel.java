@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -69,8 +70,23 @@ public class Excel {
                     for (int j = 0; j < row.getLastCellNum(); j++) {
                         Cell cell = row.getCell(j);
                         if (cell != null) {
-                            try { rowData[j] = (int)cell.getNumericCellValue();}
-                            catch(Exception err) {}
+                            switch (cell.getCellType()) {
+                                case 1:
+                                    rowData[j] = cell.getStringCellValue();
+                                    break;
+                                case 0:
+                                    if (DateUtil.isCellDateFormatted(cell)) {
+                                        rowData[j] = cell.getDateCellValue();
+                                    } else {
+                                        rowData[j] = (int)cell.getNumericCellValue();
+                                    }
+                                    break;
+                                default:
+                                    rowData[j] = cell.toString();
+                                    break;
+                            }
+                        } else {
+                            rowData[j] = ""; // Manejar celdas vacías
                         }
                     }
                     tableModel.addRow(rowData);

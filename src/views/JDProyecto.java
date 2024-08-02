@@ -5,12 +5,12 @@ import helpers.EstiloFilas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 /*
@@ -327,6 +327,40 @@ public class JDProyecto extends javax.swing.JDialog {
                 this.txtAtributos.setBackground(new Color(0xFBF7E8));
             }
             this.txtInstancias.requestFocus();
+            return;
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_3) {
+            if(this.jlItems.getModel().getSize() != 3) {
+                this.jlItems.setModel(new DefaultListModel());
+                this.rdbNominal.setEnabled(true);
+                this.rdbNumerico.setEnabled(true);
+                this.lblClase.setVisible(false);
+                this.rdbNominal.setVisible(true);
+                this.rdbNumerico.setVisible(true);
+                Controlador.listModel = new DefaultListModel();
+            }
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_4) {
+            if(this.jlItems.getModel().getSize() != 4) {
+                this.jlItems.setModel(new DefaultListModel());
+                this.rdbNominal.setEnabled(true);
+                this.rdbNumerico.setEnabled(true);
+                this.lblClase.setVisible(false);
+                this.rdbNominal.setVisible(true);
+                this.rdbNumerico.setVisible(true);
+                Controlador.listModel = new DefaultListModel();
+            }
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_5) {
+            if(this.jlItems.getModel().getSize() != 5) {
+                this.jlItems.setModel(new DefaultListModel());
+                this.rdbNominal.setEnabled(true);
+                this.rdbNumerico.setEnabled(true);
+                this.lblClase.setVisible(false);
+                this.rdbNominal.setVisible(true);
+                this.rdbNumerico.setVisible(true);
+                Controlador.listModel = new DefaultListModel();
+            }
         }
     }//GEN-LAST:event_txtAtributosKeyPressed
 

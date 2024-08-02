@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  *
  * @author yh9pl
  */
-public class JDNominal extends javax.swing.JDialog implements FocusListener {
+public class JDNominal extends javax.swing.JDialog {
 
     /**
      * Creates new form JDNominal
@@ -25,9 +25,6 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
     public JDNominal(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        this.txt1.addFocusListener(this);
-        this.txt2.addFocusListener(this);
-        this.txt3.addFocusListener(this);
     }
 
     /**
@@ -43,9 +40,6 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
         rdb2 = new javax.swing.JRadioButton();
         rdb3 = new javax.swing.JRadioButton();
         btnOk = new javax.swing.JButton();
-        txt1 = new javax.swing.JTextField();
-        txt2 = new javax.swing.JTextField();
-        txt3 = new javax.swing.JTextField();
         background = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -54,16 +48,18 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
         getContentPane().setLayout(null);
 
         rdb1.setSelected(true);
+        rdb1.setText("Bajo");
         rdb1.setFocusable(false);
         getContentPane().add(rdb1);
-        rdb1.setBounds(15, 18, 19, 20);
+        rdb1.setBounds(15, 18, 70, 21);
 
         rdb2.setSelected(true);
-        rdb2.setEnabled(false);
+        rdb2.setText("Normal");
         rdb2.setFocusable(false);
         getContentPane().add(rdb2);
-        rdb2.setBounds(120, 18, 19, 20);
+        rdb2.setBounds(120, 18, 80, 21);
 
+        rdb3.setText("Alto");
         rdb3.setFocusable(false);
         rdb3.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -71,7 +67,7 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
             }
         });
         getContentPane().add(rdb3);
-        rdb3.setBounds(227, 18, 19, 20);
+        rdb3.setBounds(227, 18, 60, 21);
 
         btnOk.setText("Ok");
         btnOk.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -87,24 +83,6 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
         getContentPane().add(btnOk);
         btnOk.setBounds(80, 55, 178, 30);
 
-        txt1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt1.setForeground(new java.awt.Color(153, 153, 153));
-        txt1.setText("Desc.");
-        getContentPane().add(txt1);
-        txt1.setBounds(40, 13, 64, 30);
-
-        txt2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt2.setForeground(new java.awt.Color(153, 153, 153));
-        txt2.setText("Desc.");
-        getContentPane().add(txt2);
-        txt2.setBounds(147, 13, 64, 30);
-
-        txt3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt3.setForeground(new java.awt.Color(153, 153, 153));
-        txt3.setEnabled(false);
-        getContentPane().add(txt3);
-        txt3.setBounds(256, 13, 64, 30);
-
         background.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         getContentPane().add(background);
         background.setBounds(0, 0, 340, 100);
@@ -119,40 +97,31 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         // TODO add your handling code here:
-        if(!this.rdb1.isSelected() && this.rdb2.isSelected() && !this.rdb3.isSelected()) {
-            JOptionPane.showMessageDialog(this, "Debes seleccionar almenos 2 valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
+        if(!this.rdb1.isSelected() && !this.rdb2.isSelected() && !this.rdb3.isSelected()) {
+            JOptionPane.showMessageDialog(this, "No se han seleccionado valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        if(this.txt3.isEnabled()) {
-            if((this.txt1.getText().equals("Desc.") || this.txt1.getText().equals("")) ||
-              (this.txt2.getText().equals("Desc.") || this.txt2.getText().equals("")) ||
-              (this.txt3.getText().equals("Desc.") || this.txt3.getText().equals(""))) {
-                JOptionPane.showMessageDialog(this, "Ingresa todos los valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-            if(!this.rdb1.isSelected()) {
-                JOptionPane.showMessageDialog(this, "Estas trabajando con una configuración de 3 valores nominales. Para usar solo 2 valores nominales, elimine el tercer valor.", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-        } else {
-            if((this.txt1.getText().equals("Desc.") || this.txt1.getText().equals("")) ||
-              (this.txt2.getText().equals("Desc.") || this.txt2.getText().equals(""))) {
-                JOptionPane.showMessageDialog(this, "Ingresa todos los valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
+        if(this.rdb1.isSelected() && !this.rdb2.isSelected() && !this.rdb3.isSelected() ||
+           !this.rdb1.isSelected() && this.rdb2.isSelected() && !this.rdb3.isSelected() ||
+           !this.rdb1.isSelected() && !this.rdb2.isSelected() && this.rdb3.isSelected()) {
+            JOptionPane.showMessageDialog(this, "Se debe seleccionar almenos 2 valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
+            return;
         }
         if(!Controlador.valoresNominales.isEmpty())
             Controlador.valoresNominales.clear();
         if(this.rdb1.isSelected() && this.rdb2.isSelected() && this.rdb3.isSelected()) {
-            Controlador.valoresNominales.add(this.txt1.getText());
-            Controlador.valoresNominales.add(this.txt2.getText());
-            Controlador.valoresNominales.add(this.txt3.getText());
+            Controlador.valoresNominales.add("1");
+            Controlador.valoresNominales.add("2");
+            Controlador.valoresNominales.add("3");
         } else if(this.rdb2.isSelected() && this.rdb3.isSelected()) {
-            Controlador.valoresNominales.add(this.txt2.getText());
-            Controlador.valoresNominales.add(this.txt3.getText());
+            Controlador.valoresNominales.add("2");
+            Controlador.valoresNominales.add("3");
         } else if(this.rdb1.isSelected() && this.rdb2.isSelected()) {
-            Controlador.valoresNominales.add(this.txt1.getText());
-            Controlador.valoresNominales.add(this.txt2.getText());
+            Controlador.valoresNominales.add("1");
+            Controlador.valoresNominales.add("2");
+        } else if(this.rdb1.isSelected() && this.rdb3.isSelected()) {
+            Controlador.valoresNominales.add("1");
+            Controlador.valoresNominales.add("3");
         }
         System.out.println(Controlador.valoresNominales);
         this.setVisible(false);
@@ -160,15 +129,7 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
     }//GEN-LAST:event_btnOkActionPerformed
 
     private void rdb3ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rdb3ItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            this.txt3.setEnabled(true);
-            this.txt3.setText("Desc.");
-            this.txt1.setForeground(new Color(0x353535));
-            this.txt1.setBackground(new Color(0xF9F4E0));
-        } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
-            this.txt3.setEnabled(false);
-            this.txt3.setText("");
-        }
+        
     }//GEN-LAST:event_rdb3ItemStateChanged
 
     /**
@@ -219,64 +180,5 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
     public javax.swing.JRadioButton rdb1;
     public javax.swing.JRadioButton rdb2;
     public javax.swing.JRadioButton rdb3;
-    public javax.swing.JTextField txt1;
-    public javax.swing.JTextField txt2;
-    public javax.swing.JTextField txt3;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void focusGained(FocusEvent e) {
-        if(e.getSource() == this.txt1) {
-            this.txt1.setForeground(new Color(0x353535));
-            this.txt1.setBackground(new Color(0xF9F4E0));
-            if(this.txt1.getText().equals("Desc.")) {
-                this.txt1.setText("");
-            }
-        }
-        if(e.getSource() == this.txt2) {
-            this.txt2.setForeground(new Color(0x353535));
-            this.txt2.setBackground(new Color(0xF9F4E0));
-            if(this.txt2.getText().equals("Desc.")) {
-                this.txt2.setText("");
-            }
-        }
-        if(e.getSource() == this.txt3) {
-            this.txt3.setForeground(new Color(0x353535));
-            this.txt3.setBackground(new Color(0xF9F4E0));
-            if(this.txt3.getText().equals("Desc.")) {
-                this.txt3.setText("");
-            }
-        }
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-        if(e.getSource() == this.txt1) {
-            if(this.txt1.getText().equals("")) {
-                this.txt1.setForeground(new Color(0x999999));
-                this.txt1.setBackground(new Color(0xFFFFFF));
-                this.txt1.setText("Desc.");
-            } else {
-                this.txt1.setBackground(new Color(0xFBF7E8));
-            }
-        }
-        if(e.getSource() == this.txt2) {
-            if(this.txt2.getText().equals("")) {
-                this.txt2.setForeground(new Color(0x999999));
-                this.txt2.setBackground(new Color(0xFFFFFF));
-                this.txt2.setText("Desc.");
-            } else {
-                this.txt2.setBackground(new Color(0xFBF7E8));
-            }
-        }
-        if(e.getSource() == this.txt3) {
-            if(this.txt3.getText().equals("")) {
-                this.txt3.setForeground(new Color(0x999999));
-                this.txt3.setBackground(new Color(0xFFFFFF));
-                this.txt3.setText("Desc.");
-            } else {
-                this.txt3.setBackground(new Color(0xFBF7E8));
-            }
-        }
-    }
 }

@@ -272,6 +272,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
                 }
                 if(this.formulario.jlItems.getModel().getSize() == Integer.parseInt(this.formulario.txtAtributos.getText())) {
                     this.formulario.btnCrearTabla.setEnabled(true);
+                    this.formulario.lblClase.setVisible(false);
                 }
             } else {
                 JOptionPane.showMessageDialog(this.formulario, "Aumenta el número de atributos para agregar más.", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
