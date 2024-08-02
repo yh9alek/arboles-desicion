@@ -130,6 +130,10 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
                 JOptionPane.showMessageDialog(this, "Ingresa todos los valores nominales", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
+            if(!this.rdb1.isSelected()) {
+                JOptionPane.showMessageDialog(this, "Estas trabajando con una configuración de 3 valores nominales. Para usar solo 2 valores nominales, elimine el tercer valor.", "Arboles de desición", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
         } else {
             if((this.txt1.getText().equals("Desc.") || this.txt1.getText().equals("")) ||
               (this.txt2.getText().equals("Desc.") || this.txt2.getText().equals(""))) {
@@ -159,6 +163,8 @@ public class JDNominal extends javax.swing.JDialog implements FocusListener {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             this.txt3.setEnabled(true);
             this.txt3.setText("Desc.");
+            this.txt1.setForeground(new Color(0x353535));
+            this.txt1.setBackground(new Color(0xF9F4E0));
         } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
             this.txt3.setEnabled(false);
             this.txt3.setText("");
