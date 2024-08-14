@@ -371,9 +371,9 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
     private double calcularEntropia(int positivos, int negativos) {
         if (positivos == 0 || negativos == 0) return 0.0;
         double total = positivos + negativos;
-        double pPositivos = positivos / total;
-        double pNegativos = negativos / total;
-        return - (pPositivos * Math.log(pPositivos) / Math.log(2)) - (pNegativos * Math.log(pNegativos) / Math.log(2));
+        double pPositivos = (double) positivos / total;
+        double pNegativos = (double) negativos / total;
+        return -(pPositivos * Math.log(pPositivos) / Math.log(2)) - (pNegativos * Math.log(pNegativos) / Math.log(2));
     }
 
     // Método para calcular la ganancia de información
@@ -384,9 +384,10 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
 
         // Contar positivos y negativos
         for (int i = 0; i < totalInstancias; i++) {
-            if (tableModel.getValueAt(i, tableModel.getColumnCount() - 1).equals("1")) {
+            String clase = tableModel.getValueAt(i, tableModel.getColumnCount() - 1).toString().trim();
+            if (clase.equals("1")) {
                 positivos++;
-            } else {
+            } else if (clase.equals("0")) {
                 negativos++;
             }
         }
@@ -396,12 +397,12 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         Map<String, int[]> conteos = new HashMap<>();
 
         for (int i = 0; i < totalInstancias; i++) {
-            String valorAtributo = tableModel.getValueAt(i, tableModel.findColumn(atributo)).toString();
-            String clase = tableModel.getValueAt(i, tableModel.getColumnCount() - 1).toString();
+            String valorAtributo = tableModel.getValueAt(i, tableModel.findColumn(atributo)).toString().trim();
+            String clase = tableModel.getValueAt(i, tableModel.getColumnCount() - 1).toString().trim();
             conteos.putIfAbsent(valorAtributo, new int[2]);
             if (clase.equals("1")) {
                 conteos.get(valorAtributo)[0]++;
-            } else {
+            } else if (clase.equals("0")) {
                 conteos.get(valorAtributo)[1]++;
             }
         }
@@ -423,7 +424,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
         Map<String, Double> ganancias = new HashMap<>();
         double maxGanancia = Double.NEGATIVE_INFINITY;
         String mejorAtributo = "";
-        
+
         for (int i = 0; i < tableModel.getColumnCount() - 1; i++) {
             String atributo = tableModel.getColumnName(i);
             double ganancia = calcularGananciaInformacion(tableModel, atributo);
@@ -433,10 +434,10 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
                 mejorAtributo = atributo;
             }
         }
-        
+
         double entropiaGeneral = calcularEntropia(
-                (int) tableModel.getDataVector().stream().filter(row -> ((Vector)row).lastElement().equals("1")).count(),
-                (int) tableModel.getDataVector().stream().filter(row -> ((Vector)row).lastElement().equals("0")).count()
+            (int) tableModel.getDataVector().stream().filter(row -> ((Vector<?>) row).lastElement().toString().trim().equals("1")).count(),
+            (int) tableModel.getDataVector().stream().filter(row -> ((Vector<?>) row).lastElement().toString().trim().equals("0")).count()
         );
 
         // Mostrar resultados
@@ -449,6 +450,7 @@ public class Controlador implements MouseListener, FocusListener, ActionListener
 
         JOptionPane.showMessageDialog(this.formulario, resultados.toString(), "Resultados", JOptionPane.INFORMATION_MESSAGE);
     }
+
 
     // Evento que sucede al cambiar alguna celda binaria
     @Override
